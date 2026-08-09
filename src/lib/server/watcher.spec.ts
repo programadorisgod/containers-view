@@ -25,6 +25,7 @@ afterEach(() => {
 function container(partial: Partial<ContainerSummary>): ContainerSummary {
 	return {
 		id: 'c1',
+		engine: 'docker',
 		name: 'app',
 		names: ['app'],
 		image: 'repo/app:latest',

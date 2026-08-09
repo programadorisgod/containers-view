@@ -15,6 +15,7 @@ vi.mock('$lib/client/toasts.svelte', () => ({ pushToast: pushToastMock }));
 function volume(partial: Partial<VolumeSummary>): VolumeSummary {
 	return {
 		name: 'data',
+		engine: 'docker',
 		driver: 'local',
 		mountpoint: '/var/lib/containers/storage/volumes/data',
 		createdAt: '2024-01-01T00:00:00Z',

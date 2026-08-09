@@ -37,7 +37,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 export function fetchStatus(): Promise<{
-	status: EngineStatus;
+	status: EngineStatus[];
 	watcher: {
 		enabled: boolean;
 		intervalMs: number;

@@ -15,6 +15,7 @@ vi.mock('$lib/client/toasts.svelte', () => ({ pushToast: pushToastMock }));
 function network(partial: Partial<NetworkSummary>): NetworkSummary {
 	return {
 		id: 'net1',
+		engine: 'docker',
 		name: 'bridge',
 		driver: 'bridge',
 		scope: 'local',

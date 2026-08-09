@@ -1,5 +1,6 @@
 import type Docker from 'dockerode';
 import { EngineConnection, isConnectionError } from './connection';
+import type { ConnectedEngine } from './connection';
 import type {
 	ContainerAction,
 	ContainerSummary,
@@ -11,7 +12,7 @@ import type {
 
 export type { ContainerAction };
 
-function normalizeContainer(c: Docker.ContainerInfo): ContainerSummary {
+function normalizeContainer(c: Docker.ContainerInfo): Omit<ContainerSummary, 'engine'> {
 	const names = (c.Names ?? []).map((n) => n.replace(/^\//, ''));
 	return {
 		id: c.Id,
@@ -33,7 +34,7 @@ function normalizeContainer(c: Docker.ContainerInfo): ContainerSummary {
 	};
 }
 
-function normalizeImage(i: Docker.ImageInfo): ImageSummary {
+function normalizeImage(i: Docker.ImageInfo): Omit<ImageSummary, 'engine'> {
 	const tags = i.RepoTags?.filter(Boolean) ?? [];
 	return {
 		id: i.Id,
@@ -55,7 +56,7 @@ function normalizeVolume(v: {
 	CreatedAt?: string;
 	Scope?: string;
 	Labels?: Record<string, string>;
-}): VolumeSummary {
+}): Omit<VolumeSummary, 'engine'> {
 	return {
 		name: v.Name ?? '',
 		driver: v.Driver ?? '',
@@ -67,7 +68,7 @@ function normalizeVolume(v: {
 	};
 }
 
-function normalizeNetwork(n: Docker.NetworkInspectInfo): NetworkSummary {
+function normalizeNetwork(n: Docker.NetworkInspectInfo): Omit<NetworkSummary, 'engine'> {
 	const subnet = n.IPAM?.Config?.[0]?.Subnet ?? undefined;
 	const createdMs =
 		typeof n.Created === 'number' ? n.Created * 1000 : new Date(n.Created ?? 0).getTime();
@@ -91,121 +92,157 @@ export class EngineService {
 		if (connection) this.connection = connection;
 	}
 
-	async getStatus(): Promise<EngineStatus> {
+	private async engines(): Promise<ConnectedEngine[]> {
 		try {
-			const engine = await this.connection.connect();
-			await engine.client.ping();
-			return {
-				running: true,
-				engine: engine.type,
-				version: engine.version,
-				apiVersion: engine.apiVersion,
-				socketPath: engine.socketPath,
-				error: null,
-				checkedAt: Date.now()
-			};
-		} catch (err) {
-			this.connection.clear();
-			return {
-				running: false,
-				engine: null,
-				version: null,
-				apiVersion: null,
-				socketPath: null,
-				error: (err as Error).message,
-				checkedAt: Date.now()
-			};
-		}
-	}
-
-	private async withClient<T>(fn: (client: Docker) => Promise<T>): Promise<T> {
-		try {
-			const engine = await this.connection.connect();
-			return await fn(engine.client);
+			return await this.connection.connect();
 		} catch (err) {
 			if (isConnectionError(err)) {
 				this.connection.clear();
-				const engine = await this.connection.connect();
-				return await fn(engine.client);
+				return await this.connection.connect();
 			}
 			throw err;
 		}
 	}
 
+	async getStatus(): Promise<EngineStatus[]> {
+		try {
+			const engines = await this.engines();
+			return await Promise.all(
+				engines.map(async (engine): Promise<EngineStatus> => {
+					try {
+						await engine.client.ping();
+						return {
+							running: true,
+							engine: engine.type,
+							version: engine.version,
+							apiVersion: engine.apiVersion,
+							socketPath: engine.socketPath,
+							error: null,
+							checkedAt: Date.now()
+						};
+					} catch (err) {
+						return {
+							running: false,
+							engine: engine.type,
+							version: null,
+							apiVersion: null,
+							socketPath: engine.socketPath,
+							error: (err as Error).message,
+							checkedAt: Date.now()
+						};
+					}
+				})
+			);
+		} catch (err) {
+			this.connection.clear();
+			return [
+				{
+					running: false,
+					engine: null,
+					version: null,
+					apiVersion: null,
+					socketPath: null,
+					error: (err as Error).message,
+					checkedAt: Date.now()
+				}
+			];
+		}
+	}
+
+	private async withAnyEngine<T>(fn: (client: Docker) => Promise<T>): Promise<T> {
+		const engines = await this.engines();
+		let lastError: unknown;
+		for (const engine of engines) {
+			try {
+				return await fn(engine.client);
+			} catch (err) {
+				lastError = err;
+			}
+		}
+		throw lastError;
+	}
+
 	async listContainers(): Promise<ContainerSummary[]> {
-		return this.withClient(async (client) => {
-			const list = await client.listContainers({ all: true });
-			return list.map(normalizeContainer);
-		});
+		const out: ContainerSummary[] = [];
+		for (const engine of await this.engines()) {
+			const list = await engine.client.listContainers({ all: true });
+			for (const c of list) out.push({ ...normalizeContainer(c), engine: engine.type });
+		}
+		return out;
 	}
 
 	async listImages(): Promise<ImageSummary[]> {
-		return this.withClient(async (client) => {
-			const list = await client.listImages({ all: false });
-			return list.map(normalizeImage);
-		});
+		const out: ImageSummary[] = [];
+		for (const engine of await this.engines()) {
+			const list = await engine.client.listImages({ all: false });
+			for (const i of list) out.push({ ...normalizeImage(i), engine: engine.type });
+		}
+		return out;
 	}
 
 	async listVolumes(): Promise<VolumeSummary[]> {
-		return this.withClient(async (client) => {
-			const data = await client.listVolumes();
+		const out: VolumeSummary[] = [];
+		for (const engine of await this.engines()) {
+			const data = await engine.client.listVolumes();
 			const used = new Set<string>();
-			const containers = await client.listContainers({ all: true });
+			const containers = await engine.client.listContainers({ all: true });
 			for (const c of containers) {
 				for (const m of c.Mounts ?? []) if (m.Name) used.add(m.Name);
 			}
-			return (data.Volumes ?? []).map((v) => ({
-				...normalizeVolume(v),
-				used: used.has(v.Name ?? '')
-			}));
-		});
+			for (const v of data.Volumes ?? []) {
+				out.push({ ...normalizeVolume(v), engine: engine.type, used: used.has(v.Name ?? '') });
+			}
+		}
+		return out;
 	}
 
 	async listNetworks(): Promise<NetworkSummary[]> {
-		return this.withClient(async (client) => {
-			const list = await client.listNetworks();
-			return list.map(normalizeNetwork);
-		});
+		const out: NetworkSummary[] = [];
+		for (const engine of await this.engines()) {
+			const list = await engine.client.listNetworks();
+			for (const n of list) out.push({ ...normalizeNetwork(n), engine: engine.type });
+		}
+		return out;
 	}
 
 	async startContainer(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getContainer(id).start();
 		});
 	}
 
 	async stopContainer(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getContainer(id).stop({ t: 10 });
 		});
 	}
 
 	async restartContainer(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getContainer(id).restart({ t: 10 });
 		});
 	}
 
 	async removeContainer(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getContainer(id).remove({ force: true, v: true });
 		});
 	}
 
 	async removeImage(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getImage(id).remove({ force: true });
 		});
 	}
 
 	async removeVolume(name: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getVolume(name).remove();
 		});
 	}
 
 	async removeNetwork(id: string): Promise<void> {
-		return this.withClient(async (client) => {
+		return this.withAnyEngine(async (client) => {
 			await client.getNetwork(id).remove();
 		});
 	}

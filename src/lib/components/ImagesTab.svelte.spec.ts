@@ -7,6 +7,7 @@ import type { ImageSummary } from '$lib/types';
 function image(partial: Partial<ImageSummary>): ImageSummary {
 	return {
 		id: partial.id ?? 'sha256:aaa',
+		engine: 'docker',
 		reference: partial.reference ?? 'repo/app:latest',
 		size: partial.size ?? 1024,
 		created: partial.created ?? 0,

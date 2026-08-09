@@ -5,6 +5,7 @@
 	import { confirmAction } from '$lib/client/dialog.svelte';
 	import { Trash2, Loader2 } from '@lucide/svelte';
 	import { formatBytes, formatDate } from '$lib/format';
+	import EngineBadge from './EngineBadge.svelte';
 
 	interface Props {
 		image: ImageSummary;
@@ -44,6 +45,8 @@
 	<div class="info">
 		<p class="name mono" title={image.reference}>{image.reference}</p>
 		<p class="meta">
+			<EngineBadge engine={image.engine} />
+			<span class="pad"></span>
 			<span class="mono">{image.id.slice(7, 19)}</span>
 			<span class="dot">·</span>
 			{formatBytes(image.size)}
@@ -98,6 +101,10 @@
 	.dot {
 		margin: 0 6px;
 		opacity: 0.5;
+	}
+	.pad {
+		display: inline-block;
+		width: 6px;
 	}
 	.used {
 		color: var(--warning);

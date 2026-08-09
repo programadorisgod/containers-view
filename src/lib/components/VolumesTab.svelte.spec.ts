@@ -7,6 +7,7 @@ import type { VolumeSummary } from '$lib/types';
 function volume(partial: Partial<VolumeSummary>): VolumeSummary {
 	return {
 		name: partial.name ?? 'data',
+		engine: 'docker',
 		driver: partial.driver ?? 'local',
 		mountpoint: partial.mountpoint ?? '/var/lib/containers/storage/volumes/data',
 		createdAt: partial.createdAt ?? '2024-01-01T00:00:00Z',

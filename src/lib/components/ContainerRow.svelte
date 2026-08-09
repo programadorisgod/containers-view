@@ -4,6 +4,7 @@
 	import { pushToast } from '$lib/client/toasts.svelte';
 	import { confirmAction } from '$lib/client/dialog.svelte';
 	import { Star, Play, Square, RotateCcw, Trash2, Loader2 } from '@lucide/svelte';
+	import EngineBadge from './EngineBadge.svelte';
 
 	interface Props {
 		container: ContainerSummary;
@@ -83,6 +84,8 @@
 	<div class="info">
 		<p class="name">{container.name}</p>
 		<p class="meta mono">
+			<EngineBadge engine={container.engine} />
+			<span class="pad"></span>
 			{container.image || container.imageId.slice(7, 19)}
 			<span class="dot">·</span>
 			{container.id.slice(0, 12)}
@@ -211,6 +214,10 @@
 	.dot {
 		margin: 0 6px;
 		opacity: 0.5;
+	}
+	.pad {
+		display: inline-block;
+		width: 6px;
 	}
 
 	.status {

@@ -5,6 +5,7 @@
 	import { confirmAction } from '$lib/client/dialog.svelte';
 	import { Trash2, Loader2 } from '@lucide/svelte';
 	import { formatDate } from '$lib/format';
+	import EngineBadge from './EngineBadge.svelte';
 
 	interface Props {
 		volume: VolumeSummary;
@@ -43,6 +44,8 @@
 	<div class="info">
 		<p class="name mono">{volume.name}</p>
 		<p class="meta">
+			<EngineBadge engine={volume.engine} />
+			<span class="pad"></span>
 			{volume.driver}
 			{#if volume.mountpoint}
 				<span class="dot">·</span>
@@ -101,6 +104,10 @@
 	.dot {
 		margin: 0 6px;
 		opacity: 0.5;
+	}
+	.pad {
+		display: inline-block;
+		width: 6px;
 	}
 	.badge {
 		font-size: 11px;

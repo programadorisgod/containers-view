@@ -7,6 +7,7 @@ import type { ContainerSummary } from '$lib/types';
 function container(partial: Partial<ContainerSummary>): ContainerSummary {
 	return {
 		id: partial.id ?? 'id-1',
+		engine: 'docker',
 		name: partial.name ?? 'app',
 		names: [partial.name ?? 'app'],
 		image: 'repo/app:latest',

@@ -26,6 +26,7 @@ export interface PortMapping {
 
 export interface ContainerSummary {
 	id: string;
+	engine: EngineType;
 	name: string;
 	names: string[];
 	image: string;
@@ -40,6 +41,7 @@ export interface ContainerSummary {
 
 export interface ImageSummary {
 	id: string;
+	engine: EngineType;
 	repoTags: string[];
 	repoDigests: string[];
 	created: number;
@@ -52,6 +54,7 @@ export interface ImageSummary {
 
 export interface VolumeSummary {
 	name: string;
+	engine: EngineType;
 	driver: string;
 	mountpoint: string;
 	createdAt: string;
@@ -62,6 +65,7 @@ export interface VolumeSummary {
 
 export interface NetworkSummary {
 	id: string;
+	engine: EngineType;
 	name: string;
 	driver: string;
 	scope: string;

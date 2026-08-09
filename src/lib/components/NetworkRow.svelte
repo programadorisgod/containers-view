@@ -5,6 +5,7 @@
 	import { confirmAction } from '$lib/client/dialog.svelte';
 	import { Trash2, Loader2, Lock, Link } from '@lucide/svelte';
 	import { formatDate } from '$lib/format';
+	import EngineBadge from './EngineBadge.svelte';
 
 	interface Props {
 		network: NetworkSummary;
@@ -49,6 +50,8 @@
 			{/if}
 		</p>
 		<p class="meta">
+			<EngineBadge engine={network.engine} />
+			<span class="pad"></span>
 			{network.driver} · {network.scope}
 			{#if network.subnet}
 				<span class="dot">·</span>
@@ -118,6 +121,10 @@
 	.dot {
 		margin: 0 5px;
 		opacity: 0.5;
+	}
+	.pad {
+		display: inline-block;
+		width: 6px;
 	}
 	.created {
 		font-size: 12px;

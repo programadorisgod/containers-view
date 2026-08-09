@@ -84,54 +84,68 @@ export function isConnectionError(err: unknown): boolean {
 	);
 }
 
-async function resolveEngine(): Promise<ConnectedEngine> {
+async function resolveEngines(): Promise<ConnectedEngine[]> {
+	const engines: ConnectedEngine[] = [];
+	const errors: string[] = [];
+	const seen = new Set<string>();
+
 	const tcp = envTransport();
 	if (tcp) {
-		const client = new Docker(tcp as never);
-		await client.ping();
-		const version = await client.version();
-		return {
-			client,
-			type: detectEngineType(version.Platform?.Name ?? ''),
-			socketPath: null,
-			version: version.Version,
-			apiVersion: version.ApiVersion
-		};
+		const key = `tcp:${tcp.host}:${tcp.port}`;
+		try {
+			const client = new Docker(tcp as never);
+			await client.ping();
+			const version = await client.version();
+			seen.add(key);
+			engines.push({
+				client,
+				type: detectEngineType(version.Platform?.Name ?? ''),
+				socketPath: null,
+				version: version.Version,
+				apiVersion: version.ApiVersion
+			});
+		} catch (err) {
+			errors.push(`DOCKER_HOST: ${(err as Error).message}`);
+		}
 	}
 
-	const errors: string[] = [];
 	for (const socketPath of candidateSocketPaths()) {
-		if (!fs.existsSync(socketPath)) continue;
+		if (!fs.existsSync(socketPath) || seen.has(socketPath)) continue;
 		try {
 			const headers = await readPingHeaders(socketPath);
 			const client = new Docker({ socketPath });
 			await client.ping();
 			const version = await client.version();
-			return {
+			seen.add(socketPath);
+			engines.push({
 				client,
 				type: detectEngineType(headers.server),
 				socketPath,
 				version: version.Version,
 				apiVersion: version.ApiVersion
-			};
+			});
 		} catch (err) {
 			errors.push(`${socketPath}: ${(err as Error).message}`);
 		}
 	}
-	throw new Error(
-		`No container engine reachable. Tried: ${errors.length ? errors.join('; ') : 'no candidate sockets found'}. ` +
-			'Start Podman/Docker, or set CONTAINERS_SOCKET / DOCKER_HOST.'
-	);
+
+	if (engines.length === 0) {
+		throw new Error(
+			`No container engine reachable. Tried: ${errors.length ? errors.join('; ') : 'no candidate sockets found'}. ` +
+				'Start Podman/Docker, or set CONTAINERS_SOCKET / DOCKER_HOST.'
+		);
+	}
+	return engines;
 }
 
 export class EngineConnection {
-	private connected: ConnectedEngine | null = null;
+	private connected: ConnectedEngine[] | null = null;
 
-	async connect(): Promise<ConnectedEngine> {
+	async connect(): Promise<ConnectedEngine[]> {
 		if (this.connected) return this.connected;
-		const engine = await resolveEngine();
-		this.connected = engine;
-		return engine;
+		const engines = await resolveEngines();
+		this.connected = engines;
+		return engines;
 	}
 
 	clear(): void {

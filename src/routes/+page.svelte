@@ -46,7 +46,7 @@
 	];
 
 	let tab = $state<Tab>('containers');
-	let status = $state<EngineStatus | null>(null);
+	let statuses = $state<EngineStatus[]>([]);
 	let containers = $state<ContainerSummary[]>([]);
 	let images = $state<ImageSummary[]>([]);
 	let volumes = $state<VolumeSummary[]>([]);
@@ -74,9 +74,9 @@
 
 	async function loadStatus() {
 		try {
-			status = (await fetchStatus()).status;
+			statuses = (await fetchStatus()).status;
 		} catch {
-			status = null;
+			statuses = [];
 		}
 	}
 
@@ -263,18 +263,30 @@
 			<p class="tagline">Visor web para Podman y Docker</p>
 		</div>
 
-		<div class="status" data-testid="engine-status" title={status?.socketPath ?? undefined}>
-			{#if status}
-				<span class="dot {status.running ? 'ok' : 'down'}" aria-hidden="true"></span>
-				<span class="engine">
-					{status.engine ? (status.engine === 'podman' ? 'Podman' : 'Docker') : 'Motor desconocido'}
-					{#if status.version}
-						<span class="version">{status.version}</span>
-					{/if}
-				</span>
-				<span class="state text-muted">{status.running ? 'conectado' : 'no disponible'}</span>
-				{#if status.error}
-					<span class="err" title={status.error}>⚠</span>
+		<div class="status" data-testid="engine-status">
+			{#if statuses.length > 0}
+				{#each statuses as s (s.engine ?? 'unknown')}
+					<span class="enginepill" class:down={!s.running} title={s.socketPath ?? undefined}>
+						<span class="dot {s.running ? 'ok' : 'down'}" aria-hidden="true"></span>
+						<span class="engine">
+							{s.engine === 'podman' ? 'Podman' : s.engine === 'docker' ? 'Docker' : 'Motor'}
+							{#if s.version}
+								<span class="version">{s.version}</span>
+							{/if}
+						</span>
+					</span>
+				{/each}
+				<span class="state text-muted"
+					>{statuses.every((s) => s.running) ? 'conectado' : 'no disponible'}</span
+				>
+				{#if statuses.some((s) => s.error)}
+					<span
+						class="err"
+						title={statuses
+							.map((s) => s.error)
+							.filter(Boolean)
+							.join('; ')}>⚠</span
+					>
 				{/if}
 			{:else}
 				<span class="dot down" aria-hidden="true"></span>
@@ -520,6 +532,18 @@
 		border-radius: 999px;
 		background: var(--bg-elevated);
 		font-size: 13px;
+	}
+	.enginepill {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.enginepill.down {
+		opacity: 0.75;
+	}
+	.enginepill + .enginepill {
+		padding-left: 8px;
+		border-left: 1px solid var(--border);
 	}
 	.dot {
 		width: 9px;

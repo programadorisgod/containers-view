@@ -7,6 +7,7 @@ import type { NetworkSummary } from '$lib/types';
 function network(partial: Partial<NetworkSummary>): NetworkSummary {
 	return {
 		id: partial.id ?? 'net1',
+		engine: 'docker',
 		name: partial.name ?? 'bridge',
 		driver: partial.driver ?? 'bridge',
 		scope: partial.scope ?? 'local',

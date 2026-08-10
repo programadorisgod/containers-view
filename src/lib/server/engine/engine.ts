@@ -164,24 +164,37 @@ export class EngineService {
 
 	async listContainers(): Promise<ContainerSummary[]> {
 		const out: ContainerSummary[] = [];
+		const seen = new Set<string>();
 		for (const engine of await this.engines()) {
 			const list = await engine.client.listContainers({ all: true });
-			for (const c of list) out.push({ ...normalizeContainer(c), engine: engine.type });
+			for (const c of list) {
+				if (!seen.has(c.Id)) {
+					seen.add(c.Id);
+					out.push({ ...normalizeContainer(c), engine: engine.type });
+				}
+			}
 		}
 		return out;
 	}
 
 	async listImages(): Promise<ImageSummary[]> {
 		const out: ImageSummary[] = [];
+		const seen = new Set<string>();
 		for (const engine of await this.engines()) {
 			const list = await engine.client.listImages({ all: false });
-			for (const i of list) out.push({ ...normalizeImage(i), engine: engine.type });
+			for (const i of list) {
+				if (!seen.has(i.Id)) {
+					seen.add(i.Id);
+					out.push({ ...normalizeImage(i), engine: engine.type });
+				}
+			}
 		}
 		return out;
 	}
 
 	async listVolumes(): Promise<VolumeSummary[]> {
 		const out: VolumeSummary[] = [];
+		const seen = new Set<string>();
 		for (const engine of await this.engines()) {
 			const data = await engine.client.listVolumes();
 			const used = new Set<string>();
@@ -190,7 +203,10 @@ export class EngineService {
 				for (const m of c.Mounts ?? []) if (m.Name) used.add(m.Name);
 			}
 			for (const v of data.Volumes ?? []) {
-				out.push({ ...normalizeVolume(v), engine: engine.type, used: used.has(v.Name ?? '') });
+				if (!seen.has(v.Name ?? '')) {
+					seen.add(v.Name ?? '');
+					out.push({ ...normalizeVolume(v), engine: engine.type, used: used.has(v.Name ?? '') });
+				}
 			}
 		}
 		return out;
@@ -198,9 +214,15 @@ export class EngineService {
 
 	async listNetworks(): Promise<NetworkSummary[]> {
 		const out: NetworkSummary[] = [];
+		const seen = new Set<string>();
 		for (const engine of await this.engines()) {
 			const list = await engine.client.listNetworks();
-			for (const n of list) out.push({ ...normalizeNetwork(n), engine: engine.type });
+			for (const n of list) {
+				if (!seen.has(n.Id)) {
+					seen.add(n.Id);
+					out.push({ ...normalizeNetwork(n), engine: engine.type });
+				}
+			}
 		}
 		return out;
 	}

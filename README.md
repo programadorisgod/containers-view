@@ -66,10 +66,48 @@ destinatario.
 | `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram | `''` |
 | `TELEGRAM_CHAT_ID` | ID del chat de Telegram | `''` |
 
+### Motor de contenedores
+
+| Variable | Descripción | Valor por defecto |
+|---|---|---|
+| `PODMAN_SOCKET` | Ruta al socket de Podman | `''` |
+| `CONTAINERS_SOCKET` | Ruta genérica al socket del motor | `''` |
+| `DOCKER_HOST` | URL de conexión (unix:// o tcp://) | `''` |
+
+### Preview
+
+| Variable | Descripción | Valor por defecto |
+|---|---|---|
+| `PREVIEW_ALLOWED_HOSTS` | Hosts permitidos en preview (separados por coma) | `''` |
+
 ## Estado persistente
 
 El estado del watcher y los ajustes se guardan en `./data` (watcher.json,
 settings.json). Usa `CONTAINERS_VIEW_DATA` para cambiar la ubicación.
+
+## Motor de contenedores
+
+La app detecta automáticamente Podman y Docker buscando sockets en rutas
+conocidas. Si no encuentra ninguno, muestra un error de conexión.
+
+Para especificar manualmente el socket o usar una conexión remota:
+
+```bash
+# Socket directo
+PODMAN_SOCKET=/run/user/1000/podman/podman.sock
+
+# O usar DOCKER_HOST (soporta unix:// y tcp://)
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+
+# O apuntar directamente al socket
+CONTAINERS_SOCKET=/run/user/1000/podman/podman.sock
+```
+
+Para encontrar la ruta del socket de Podman:
+
+```sh
+podman info --format '{{.Host.RemoteSocket.Path}}'
+```
 
 ## Despliegue
 

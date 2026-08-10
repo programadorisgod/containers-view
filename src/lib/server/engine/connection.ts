@@ -27,12 +27,16 @@ function getUid(): number {
 
 function candidateSocketPaths(): string[] {
 	const runtime = process.env.XDG_RUNTIME_DIR || `/run/user/${getUid()}`;
+	const home = process.env.HOME || process.env.HOMEPATH || '';
 	const candidates = [
 		process.env.CONTAINERS_SOCKET,
 		process.env.DOCKER_SOCKET,
+		process.env.PODMAN_SOCKET,
 		'/var/run/docker.sock',
+		'/run/podman/podman.sock',
 		path.join(runtime, 'podman', 'podman.sock'),
-		path.join(runtime, 'docker.sock')
+		path.join(runtime, 'docker.sock'),
+		...(home ? [path.join(home, '.local', 'share', 'containers', 'podman', 'machine', 'podman.sock')] : [])
 	];
 	return [...new Set(candidates.filter((c): c is string => Boolean(c)))];
 }

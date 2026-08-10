@@ -3,9 +3,11 @@ import type { NotificationChannelType } from '../../types';
 import type { ProviderConfig } from './types';
 
 export function buildProviderConfig(settings: SettingsData): ProviderConfig {
+	const multiTo = settings.multiTo ?? process.env.NOTIFY_MULTI_TO === 'true';
 	return {
 		to: settings.to || process.env.NOTIFY_TO || '',
 		from: settings.from || process.env.NOTIFY_FROM || '',
+		multiTo,
 		smtp: {
 			host: process.env.SMTP_HOST || '',
 			port: Number(process.env.SMTP_PORT || 587),
@@ -13,7 +15,8 @@ export function buildProviderConfig(settings: SettingsData): ProviderConfig {
 			user: process.env.SMTP_USER || '',
 			pass: process.env.SMTP_PASS || '',
 			from: settings.from || process.env.NOTIFY_FROM || '',
-			to: settings.to || process.env.NOTIFY_TO || ''
+			to: settings.to || process.env.NOTIFY_TO || '',
+			multiTo
 		},
 		telegram: {
 			botToken: process.env.TELEGRAM_BOT_TOKEN || '',

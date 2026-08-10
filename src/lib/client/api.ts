@@ -1,3 +1,4 @@
+import { base } from '$app/paths';
 import type { EngineStatus, NotificationChannelType, WatchRunResult, WatchState } from '$lib/types';
 
 export class ApiError extends Error {
@@ -11,9 +12,10 @@ export class ApiError extends Error {
 }
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
+	const fullUrl = url.startsWith('/') ? `${base}${url}` : url;
 	let response: Response;
 	try {
-		response = await fetch(url, init);
+		response = await fetch(fullUrl, init);
 	} catch {
 		throw new ApiError('No se pudo conectar con el servidor.');
 	}
@@ -105,6 +107,7 @@ export function runWatcherNow(): Promise<WatchRunResult> {
 export interface SettingsView {
 	to: string;
 	from: string;
+	multiTo: boolean;
 	channels: {
 		type: NotificationChannelType;
 		label: string;
@@ -120,6 +123,7 @@ export function fetchSettings(): Promise<SettingsView> {
 export function updateSettings(patch: {
 	to?: string;
 	from?: string;
+	multiTo?: boolean;
 	enabledChannels?: NotificationChannelType[];
 }): Promise<SettingsView> {
 	return request('/api/settings', {

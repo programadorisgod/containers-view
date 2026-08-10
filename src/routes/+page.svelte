@@ -57,6 +57,7 @@
 	let showSettings = $state(false);
 	let settingsTo = $state('');
 	let settingsFrom = $state('');
+	let settingsMultiTo = $state(false);
 	let availableChannels = $state<
 		{ type: NotificationChannelType; label: string; description: string; configured: boolean }[]
 	>([]);
@@ -119,6 +120,7 @@
 			const s = await fetchSettings();
 			settingsTo = s.to;
 			settingsFrom = s.from;
+			settingsMultiTo = s.multiTo;
 			availableChannels = s.channels;
 		} catch {
 			/* settings not critical */
@@ -184,7 +186,7 @@
 	async function saveSettings() {
 		settingsSaving = true;
 		try {
-			const s = await updateSettings({ to: settingsTo, from: settingsFrom });
+			const s = await updateSettings({ to: settingsTo, from: settingsFrom, multiTo: settingsMultiTo });
 			availableChannels = s.channels;
 			pushToast({
 				type: 'success',
@@ -423,14 +425,30 @@
 
 				<h3>Notificaciones</h3>
 				<div class="field">
-					<label for="settings-to">Destinatario</label>
+					<label for="settings-to">Destinatario{#if settingsMultiTo}s (separados por coma){/if}</label>
 					<input
 						id="settings-to"
 						type="text"
 						bind:value={settingsTo}
-						placeholder="alguien@ejemplo.com"
+						placeholder={settingsMultiTo ? 'uno@ejemplo.com, dos@ejemplo.com' : 'alguien@ejemplo.com'}
 						data-testid="settings-to"
 					/>
+				</div>
+				<div class="field">
+					<button class="switch-row" onclick={() => settingsMultiTo = !settingsMultiTo}>
+						<span
+							class="switch"
+							class:on={settingsMultiTo}
+							role="switch"
+							aria-checked={settingsMultiTo}
+						>
+							<span class="knob"></span>
+						</span>
+						<span>
+							<strong>Enviar a múltiples destinatarios</strong>
+							<small>Permite separar varios correos con comas en el campo destinatario.</small>
+						</span>
+					</button>
 				</div>
 				<div class="field">
 					<label for="settings-from">Remitente</label>

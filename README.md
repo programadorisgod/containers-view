@@ -28,9 +28,43 @@ Canales disponibles:
 - **Telegram** — requiere `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`.
 - **WhatsApp** — placeholder, aún no implementado.
 
-Copia `.env.example` a `.env` y rellena las variables (ver el archivo para el
+Copiar `.env.example` a `.env` y rellenar las variables (ver el archivo para el
 detalle). El destinatario y el remitente también pueden editarse desde la
 interfaz (Ajustes → Notificaciones).
+
+### Múltiples destinatarios de correo
+
+Para enviar alertas a varios correos, activa la opción **Enviar a múltiples
+destinatarios** desde la UI (panel Notificaciones) y separa los correos con
+comas en el campo destinatario:
+
+```
+admin@ejemplo.com, ops@ejemplo.com, alerts@ejemplo.com
+```
+
+También se puede activar por variable de entorno:
+
+```bash
+NOTIFY_MULTI_TO=true
+```
+
+Cuando está desactivado (valor por defecto), solo se envía a un único
+destinatario.
+
+### Variables de notificación
+
+| Variable | Descripción | Valor por defecto |
+|---|---|---|
+| `NOTIFY_TO` | Destinatario(s) de correo | `''` |
+| `NOTIFY_FROM` | Remitente de correo | `''` |
+| `NOTIFY_MULTI_TO` | Permite varios destinatarios separados por coma | `false` |
+| `SMTP_HOST` | Servidor SMTP | `''` |
+| `SMTP_PORT` | Puerto SMTP | `587` |
+| `SMTP_SECURE` | Usar TLS | `false` |
+| `SMTP_USER` | Usuario SMTP | `''` |
+| `SMTP_PASS` | Contraseña SMTP | `''` |
+| `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram | `''` |
+| `TELEGRAM_CHAT_ID` | ID del chat de Telegram | `''` |
 
 ## Estado persistente
 

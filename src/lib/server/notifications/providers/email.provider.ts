@@ -29,9 +29,15 @@ export class EmailProvider implements NotificationProvider {
 			secure: this.config.secure,
 			auth: this.config.user ? { user: this.config.user, pass: this.config.pass } : undefined
 		});
+
+		let recipients: string | string[] = message.to ?? this.config.to;
+		if (this.config.multiTo && typeof recipients === 'string') {
+			recipients = recipients.split(',').map((e) => e.trim()).filter(Boolean);
+		}
+
 		await transporter.sendMail({
 			from: this.config.from || message.to,
-			to: message.to ?? this.config.to,
+			to: recipients,
 			subject: message.subject,
 			text: message.text,
 			html: message.html

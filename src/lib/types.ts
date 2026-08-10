@@ -113,6 +113,7 @@ export interface NotificationChannelConfig {
 export interface AppSettings {
 	to: string;
 	from: string;
+	multiTo: boolean;
 	channels: NotificationChannelConfig[];
 }
 

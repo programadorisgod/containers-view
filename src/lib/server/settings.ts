@@ -8,12 +8,14 @@ import type { ProviderConfig } from './notifications/types';
 export interface SettingsData {
 	to: string;
 	from: string;
+	multiTo: boolean;
 	enabledChannels: NotificationChannelType[];
 }
 
 const defaults = (): SettingsData => ({
 	to: process.env.NOTIFY_TO || '',
 	from: process.env.NOTIFY_FROM || '',
+	multiTo: process.env.NOTIFY_MULTI_TO === 'true',
 	enabledChannels: ['email', 'console']
 });
 
@@ -28,6 +30,7 @@ export class SettingsService {
 		return this.store.update((draft) => {
 			if (partial.to !== undefined) draft.to = partial.to;
 			if (partial.from !== undefined) draft.from = partial.from;
+			if (partial.multiTo !== undefined) draft.multiTo = partial.multiTo;
 			if (partial.enabledChannels !== undefined) draft.enabledChannels = partial.enabledChannels;
 		});
 	}
@@ -51,6 +54,7 @@ export class SettingsService {
 		return {
 			to: data.to || process.env.NOTIFY_TO || '',
 			from: data.from || process.env.NOTIFY_FROM || '',
+			multiTo: data.multiTo ?? process.env.NOTIFY_MULTI_TO === 'true',
 			channels
 		};
 	}

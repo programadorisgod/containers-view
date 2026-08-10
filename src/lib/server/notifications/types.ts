@@ -9,6 +9,13 @@ export interface NotificationMessage {
 	to?: string;
 }
 
+export interface NotificationMessageMulti {
+	subject: string;
+	text: string;
+	html?: string;
+	to?: string | string[];
+}
+
 export interface NotificationProvider {
 	readonly type: NotificationChannelType;
 	readonly label: string;
@@ -25,6 +32,7 @@ export interface SmtpConfig {
 	pass: string;
 	from: string;
 	to: string;
+	multiTo: boolean;
 }
 
 export interface TelegramConfig {
@@ -35,6 +43,7 @@ export interface TelegramConfig {
 export interface ProviderConfig {
 	to: string;
 	from: string;
+	multiTo: boolean;
 	smtp: SmtpConfig;
 	telegram: TelegramConfig;
 }

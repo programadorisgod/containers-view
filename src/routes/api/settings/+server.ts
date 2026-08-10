@@ -11,12 +11,14 @@ export async function POST({ request }) {
 	const body = (await request.json().catch(() => ({}))) as {
 		to?: string;
 		from?: string;
+		multiTo?: boolean;
 		enabledChannels?: NotificationChannelType[];
 	};
 	try {
 		settingsService.update({
 			to: body.to,
 			from: body.from,
+			multiTo: body.multiTo,
 			enabledChannels: body.enabledChannels
 		});
 		return json(settingsService.appSettings());

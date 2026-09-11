@@ -45,8 +45,9 @@ async function build(containers: ContainerSummary[]) {
 		listContainers: vi.fn(async () => containers)
 	} as unknown as EngineService;
 	const settings = {
-		get: () => ({ to: '', from: '', enabledChannels: ['console'] }),
-		providerConfig: () => buildProviderConfig({ to: '', from: '', enabledChannels: ['console'] })
+		get: () => ({ to: '', from: '', multiTo: false, enabledChannels: ['console'] }),
+		providerConfig: () =>
+			buildProviderConfig({ to: '', from: '', multiTo: false, enabledChannels: ['console'] })
 	} as unknown as SettingsService;
 	const watcher = new WatcherService(engine, settings);
 	return { watcher, engine };

@@ -32,7 +32,10 @@ export class EmailProvider implements NotificationProvider {
 
 		let recipients: string | string[] = message.to ?? this.config.to;
 		if (this.config.multiTo && typeof recipients === 'string') {
-			recipients = recipients.split(',').map((e) => e.trim()).filter(Boolean);
+			recipients = recipients
+				.split(',')
+				.map((e) => e.trim())
+				.filter(Boolean);
 		}
 
 		await transporter.sendMail({

@@ -25,3 +25,5 @@ vite.config.ts.timestamp-*
 
 containers-view.conf
 ecosystem.config.cjs
+.codegraph/
+

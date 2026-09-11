@@ -102,32 +102,47 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		padding: 6px 12px;
-		border-radius: 999px;
+		padding: 6px 14px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		color: var(--text-muted);
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
+		box-shadow: var(--card-shadow);
+		transition:
+			border-color 0.15s ease,
+			color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
 	}
 	.chips button:hover {
 		color: var(--text);
 		border-color: var(--border-strong);
+		background: var(--bg-raised);
+	}
+	.chips button:active {
+		transform: scale(0.97);
 	}
 	.chips button.active {
-		color: #062031;
-		background: var(--accent);
-		border-color: var(--accent);
+		color: #ffffff;
+		background: #0070f3;
+		border-color: #0070f3;
+		box-shadow:
+			0 0 0 1px rgba(0, 0, 0, 0.08),
+			0 2px 4px rgba(0, 0, 0, 0.08);
 	}
 	.chips button.active .count {
-		background: rgba(6, 32, 49, 0.18);
+		background: rgba(255, 255, 255, 0.22);
+		color: #ffffff;
 	}
 	.count {
 		background: var(--bg-raised);
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		padding: 0 7px;
 		font-size: 11px;
 		line-height: 17px;
+		color: var(--text-muted);
 	}
 	.search {
 		flex: 1;
@@ -138,10 +153,15 @@
 		background: var(--bg-elevated);
 		color: var(--text);
 		font-size: 13px;
+		box-shadow: var(--card-shadow);
+		transition:
+			border-color 0.15s ease,
+			box-shadow 0.15s ease;
 	}
 	.search:focus {
 		outline: none;
 		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--info-bg);
 	}
 	.list {
 		display: flex;

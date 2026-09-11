@@ -5,7 +5,12 @@ import type { ProviderConfig } from './types';
 import type { SettingsData } from '../settings';
 
 function emptyConfig(): ProviderConfig {
-	return buildProviderConfig({ to: '', from: '', enabledChannels: [] } satisfies SettingsData);
+	return buildProviderConfig({
+		to: '',
+		from: '',
+		multiTo: false,
+		enabledChannels: []
+	} satisfies SettingsData);
 }
 
 describe('ProviderFactory', () => {

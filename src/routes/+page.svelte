@@ -17,8 +17,11 @@
 		Bell,
 		Loader2,
 		X,
-		CheckCircle2
+		CheckCircle2,
+		Sun,
+		Moon
 	} from '@lucide/svelte';
+	import { theme } from '$lib/theme.svelte';
 	import ContainersTab from '$lib/components/ContainersTab.svelte';
 	import ImagesTab from '$lib/components/ImagesTab.svelte';
 	import VolumesTab from '$lib/components/VolumesTab.svelte';
@@ -186,7 +189,11 @@
 	async function saveSettings() {
 		settingsSaving = true;
 		try {
-			const s = await updateSettings({ to: settingsTo, from: settingsFrom, multiTo: settingsMultiTo });
+			const s = await updateSettings({
+				to: settingsTo,
+				from: settingsFrom,
+				multiTo: settingsMultiTo
+			});
 			availableChannels = s.channels;
 			pushToast({
 				type: 'success',
@@ -323,6 +330,20 @@
 					size={17}
 				/>{/if}
 		</button>
+
+		<button
+			class="icon-btn theme-toggle"
+			onclick={(e) => theme.toggle(e.clientX, e.clientY)}
+			title={theme.current === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+			aria-label={theme.current === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+			data-testid="theme-toggle"
+		>
+			{#if theme.current === 'dark'}
+				<Sun size={17} />
+			{:else}
+				<Moon size={17} />
+			{/if}
+		</button>
 	</header>
 
 	<div class="tabs" role="tablist" aria-label="Tipo de recurso" data-testid="tabs">
@@ -425,17 +446,21 @@
 
 				<h3>Notificaciones</h3>
 				<div class="field">
-					<label for="settings-to">Destinatario{#if settingsMultiTo}s (separados por coma){/if}</label>
+					<label for="settings-to"
+						>Destinatario{#if settingsMultiTo}s (separados por coma){/if}</label
+					>
 					<input
 						id="settings-to"
 						type="text"
 						bind:value={settingsTo}
-						placeholder={settingsMultiTo ? 'uno@ejemplo.com, dos@ejemplo.com' : 'alguien@ejemplo.com'}
+						placeholder={settingsMultiTo
+							? 'uno@ejemplo.com, dos@ejemplo.com'
+							: 'alguien@ejemplo.com'}
 						data-testid="settings-to"
 					/>
 				</div>
 				<div class="field">
-					<button class="switch-row" onclick={() => settingsMultiTo = !settingsMultiTo}>
+					<button class="switch-row" onclick={() => (settingsMultiTo = !settingsMultiTo)}>
 						<span
 							class="switch"
 							class:on={settingsMultiTo}
@@ -547,8 +572,9 @@
 		margin-left: auto;
 		padding: 6px 12px;
 		border: 1px solid var(--border);
-		border-radius: 999px;
-		background: var(--bg-elevated);
+		border-radius: var(--radius-pill);
+		background: var(--bg-surface);
+		box-shadow: var(--card-shadow);
 		font-size: 13px;
 	}
 	.enginepill {
@@ -599,17 +625,27 @@
 		place-items: center;
 		width: 34px;
 		height: 34px;
-		border-radius: 8px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		color: var(--text-muted);
+		box-shadow: var(--card-shadow);
+		transition:
+			transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+			color 0.15s ease,
+			border-color 0.15s ease,
+			background-color 0.15s ease;
 	}
 	.icon-btn:hover:not(:disabled) {
 		color: var(--text);
 		border-color: var(--border-strong);
+		background: var(--bg-raised);
+	}
+	.icon-btn:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 	.icon-btn:disabled {
-		opacity: 0.5;
+		opacity: 0.45;
 		cursor: not-allowed;
 	}
 	.spin {
@@ -624,47 +660,61 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 4px;
+		gap: 6px;
 		border-bottom: 1px solid var(--border);
-		margin-bottom: 18px;
+		margin-bottom: 20px;
 	}
 	.tabs button {
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		padding: 10px 14px;
+		padding: 9px 14px;
 		border: none;
 		background: none;
 		color: var(--text-muted);
-		font-size: 14px;
-		font-weight: 600;
+		font-size: 13px;
+		font-weight: 500;
 		border-bottom: 2px solid transparent;
 		margin-bottom: -1px;
 		white-space: nowrap;
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease;
 	}
 	.tabs button:hover {
 		color: var(--text);
 	}
 	.tabs button.active {
-		color: var(--text);
+		color: var(--accent);
 		border-bottom-color: var(--accent);
+		font-weight: 600;
 	}
 	.btn.notif {
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
 		position: relative;
-		padding: 7px 13px;
-		border-radius: 999px;
+		padding: 7px 14px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		color: var(--text);
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
+		box-shadow: var(--card-shadow);
+		transition:
+			transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+			border-color 0.15s ease,
+			color 0.15s ease,
+			background-color 0.15s ease;
 	}
 	.btn.notif:hover:not(:disabled) {
 		border-color: var(--border-strong);
 		color: var(--text);
+		background: var(--bg-raised);
+	}
+	.btn.notif:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 	.btn.notif.open {
 		border-color: var(--accent);
@@ -681,7 +731,8 @@
 	.overlay {
 		position: fixed;
 		inset: 0;
-		background: rgba(4, 8, 16, 0.6);
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(2px);
 		z-index: 40;
 	}
 	.drawer {
@@ -692,9 +743,9 @@
 		width: min(420px, 100vw);
 		display: flex;
 		flex-direction: column;
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		border-left: 1px solid var(--border);
-		box-shadow: -18px 0 44px rgba(0, 0, 0, 0.45);
+		box-shadow: var(--drawer-shadow);
 		z-index: 50;
 	}
 	.drawer-header {
@@ -741,11 +792,11 @@
 	}
 	.field label {
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
 	}
 	.field-label {
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
 	}
 	.inline {
 		display: flex;
@@ -756,13 +807,18 @@
 		padding: 8px 12px;
 		border-radius: var(--radius-sm);
 		border: 1px solid var(--border);
-		background: var(--bg-raised);
+		background: var(--bg-elevated);
 		color: var(--text);
 		font-size: 13px;
+		box-shadow: var(--card-shadow);
+		transition:
+			border-color 0.15s ease,
+			box-shadow 0.15s ease;
 	}
 	input:focus {
 		outline: none;
 		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--info-bg);
 	}
 	.switch-row {
 		display: flex;
@@ -788,11 +844,13 @@
 		position: relative;
 		width: 42px;
 		height: 24px;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		background: var(--bg-raised);
 		border: 1px solid var(--border-strong);
 		flex-shrink: 0;
-		transition: background 0.15s;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease;
 	}
 	.switch .knob {
 		position: absolute;
@@ -803,8 +861,8 @@
 		border-radius: 50%;
 		background: var(--text-faint);
 		transition:
-			transform 0.15s,
-			background 0.15s;
+			transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+			background-color 0.15s ease;
 	}
 	.switch.on {
 		background: var(--accent);
@@ -812,7 +870,7 @@
 	}
 	.switch.on .knob {
 		transform: translateX(18px);
-		background: #062031;
+		background: #ffffff;
 	}
 	.stats {
 		margin: 0;
@@ -855,7 +913,7 @@
 		font-size: 11px;
 		font-weight: 600;
 		padding: 2px 8px;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 	}
 	.channels .state.configured {
 		color: var(--success);
@@ -871,28 +929,49 @@
 		flex-wrap: wrap;
 	}
 	.btn {
-		padding: 8px 14px;
-		border-radius: var(--radius-sm);
-		border: 1px solid var(--accent);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 8px 16px;
+		border-radius: var(--radius-pill);
+		border: 1px solid transparent;
 		background: var(--accent);
-		color: #062031;
+		color: #ffffff;
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
+		box-shadow:
+			0 0 0 1px rgba(0, 0, 0, 0.08),
+			0 2px 4px rgba(0, 0, 0, 0.08);
+		transition:
+			transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+			background-color 0.15s ease,
+			box-shadow 0.15s ease;
 	}
 	.btn:hover:not(:disabled) {
-		filter: brightness(1.06);
+		background: var(--accent-hover);
+		box-shadow:
+			0 0 0 1px rgba(0, 0, 0, 0.12),
+			0 4px 8px rgba(0, 0, 0, 0.12);
+	}
+	.btn:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 	.btn.ghost {
-		background: var(--bg-raised);
+		background: var(--bg-elevated);
 		color: var(--text);
-		border-color: var(--border-strong);
+		border: 1px solid var(--border);
+		box-shadow: var(--card-shadow);
 	}
 	.btn.ghost:hover:not(:disabled) {
-		border-color: var(--accent);
+		border-color: var(--border-hover);
 		color: var(--accent);
+		background: var(--bg-raised);
+	}
+	.btn.ghost:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 	.btn:disabled {
-		opacity: 0.6;
+		opacity: 0.45;
 		cursor: not-allowed;
 	}
 	.loading {

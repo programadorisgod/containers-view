@@ -45,11 +45,11 @@
 		display: flex;
 		align-items: flex-start;
 		gap: 10px;
-		padding: 12px 14px;
-		border-radius: var(--radius-sm);
-		background: var(--bg-elevated);
+		padding: 12px 16px;
+		border-radius: var(--radius-md);
+		background: var(--bg-surface);
 		border: 1px solid var(--border);
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+		box-shadow: var(--modal-shadow);
 		animation: toast-in 0.18s ease-out;
 	}
 
@@ -65,13 +65,13 @@
 	}
 
 	.toast.success {
-		border-color: rgba(52, 211, 153, 0.4);
+		border-color: rgba(0, 230, 118, 0.4);
 	}
 	.toast.error {
-		border-color: rgba(251, 113, 133, 0.45);
+		border-color: rgba(255, 91, 79, 0.45);
 	}
 	.toast.warning {
-		border-color: rgba(251, 191, 36, 0.45);
+		border-color: rgba(255, 215, 64, 0.45);
 	}
 
 	.icon {

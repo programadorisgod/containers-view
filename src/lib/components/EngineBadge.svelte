@@ -20,13 +20,13 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		padding: 2px 7px;
-		border-radius: 999px;
+		padding: 2px 8px;
+		border-radius: var(--radius-pill);
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
 	.badge.docker {
-		color: var(--info);
+		color: var(--accent);
 		background: var(--info-bg);
 	}
 	.badge.podman {

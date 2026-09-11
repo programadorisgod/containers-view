@@ -74,13 +74,19 @@
 		grid-template-columns: 1fr auto auto;
 		align-items: center;
 		gap: 14px;
-		padding: 12px 14px;
+		padding: 12px 16px;
 		background: var(--bg-elevated);
 		border: 1px solid var(--border);
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-md);
+		box-shadow: var(--card-shadow);
+		transition:
+			border-color 0.15s ease,
+			box-shadow 0.15s ease,
+			background-color 0.15s ease;
 	}
 	.row:hover {
 		border-color: var(--border-strong);
+		box-shadow: var(--card-shadow-hover);
 	}
 	.info {
 		min-width: 0;
@@ -116,20 +122,33 @@
 	.action {
 		display: grid;
 		place-items: center;
-		width: 30px;
-		height: 30px;
-		border-radius: 7px;
+		width: 32px;
+		height: 32px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
 		background: var(--bg-raised);
 		color: var(--text-muted);
+		box-shadow: var(--card-shadow);
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
+	}
+	.action:hover:not(:disabled) {
+		color: var(--text);
+		border-color: var(--border-strong);
+	}
+	.action:active:not(:disabled) {
+		transform: scale(0.94);
 	}
 	.action.danger:hover:not(:disabled) {
 		color: var(--danger);
-		border-color: rgba(251, 113, 133, 0.4);
+		border-color: rgba(255, 91, 79, 0.4);
 		background: var(--danger-bg);
 	}
 	.action:disabled {
-		opacity: 0.5;
+		opacity: 0.35;
 		cursor: not-allowed;
 	}
 	.spin {

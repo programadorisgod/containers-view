@@ -24,8 +24,8 @@
 		padding: 56px 20px;
 		text-align: center;
 		border: 1px dashed var(--border-strong);
-		border-radius: var(--radius);
-		background: var(--bg-elevated);
+		border-radius: var(--radius-lg);
+		background: var(--bg-surface);
 	}
 	.icon {
 		color: var(--text-faint);

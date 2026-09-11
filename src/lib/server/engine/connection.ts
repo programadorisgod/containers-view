@@ -36,7 +36,9 @@ function candidateSocketPaths(): string[] {
 		'/run/podman/podman.sock',
 		path.join(runtime, 'podman', 'podman.sock'),
 		path.join(runtime, 'docker.sock'),
-		...(home ? [path.join(home, '.local', 'share', 'containers', 'podman', 'machine', 'podman.sock')] : [])
+		...(home
+			? [path.join(home, '.local', 'share', 'containers', 'podman', 'machine', 'podman.sock')]
+			: [])
 	];
 	return [...new Set(candidates.filter((c): c is string => Boolean(c)))];
 }

@@ -67,17 +67,27 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		padding: 6px 12px;
-		border-radius: 999px;
+		padding: 6px 14px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
-		background: var(--bg-elevated);
+		background: var(--bg-surface);
 		color: var(--text-muted);
 		font-size: 12px;
-		font-weight: 600;
+		font-weight: 500;
+		box-shadow: var(--card-shadow);
+		transition:
+			transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+			border-color 0.15s ease,
+			color 0.15s ease,
+			background-color 0.15s ease;
 	}
 	.sort:hover {
 		color: var(--text);
 		border-color: var(--border-strong);
+		background: var(--bg-raised);
+	}
+	.sort:active {
+		transform: scale(0.97);
 	}
 	.list {
 		display: flex;

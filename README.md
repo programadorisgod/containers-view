@@ -1,7 +1,22 @@
 # Containers View
 
-Visor web para Podman y Docker: contenedores, imágenes, volúmenes y redes, con
-vigilancia de contenedores destacados y notificaciones cuando dejan de ejecutarse.
+Visor web moderno y minimalista para Podman y Docker: inspecciona y gestiona contenedores, imágenes, volúmenes y redes, con vigilancia de contenedores destacados y notificaciones cuando dejan de ejecutarse.
+
+Construido con SvelteKit y diseñado con la estética **Vercel Design System** y elevaciones de **Material Design**:
+
+- **Paleta de color refinada**: Acento Vercel Blue (`#0070F3`), base oscura `#0A0A0A` con superficies `#111111`, `#1A1A1A` y `#222222`, y modo claro impecable (`#FFFFFF`, `#FAFAFA`, `#F5F5F5`).
+- **Técnica Shadow-as-Border**: Anillos nítidos de 1px con sombras de elevación cortas y elegantes.
+- **Modo Oscuro / Claro**: Selector interactivo en la cabecera (Sol / Luna) con transición circular suave persistida en `localStorage`.
+- **Acciones y Micro-interacciones**: Botones píldora sólidos y retroalimentación activa al presionar (`active:scale`).
+- **Destacados con Acento Azul**: Visualización limpia y distintiva para contenedores vigilados.
+
+### Modo Oscuro
+
+![Containers View — Dark Mode](snapshots/dark.png)
+
+### Modo Claro
+
+![Containers View — Light Mode](snapshots/light.png)
 
 ## Desarrollo
 
@@ -53,32 +68,32 @@ destinatario.
 
 ### Variables de notificación
 
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `NOTIFY_TO` | Destinatario(s) de correo | `''` |
-| `NOTIFY_FROM` | Remitente de correo | `''` |
-| `NOTIFY_MULTI_TO` | Permite varios destinatarios separados por coma | `false` |
-| `SMTP_HOST` | Servidor SMTP | `''` |
-| `SMTP_PORT` | Puerto SMTP | `587` |
-| `SMTP_SECURE` | Usar TLS | `false` |
-| `SMTP_USER` | Usuario SMTP | `''` |
-| `SMTP_PASS` | Contraseña SMTP | `''` |
-| `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram | `''` |
-| `TELEGRAM_CHAT_ID` | ID del chat de Telegram | `''` |
+| Variable             | Descripción                                     | Valor por defecto |
+| -------------------- | ----------------------------------------------- | ----------------- |
+| `NOTIFY_TO`          | Destinatario(s) de correo                       | `''`              |
+| `NOTIFY_FROM`        | Remitente de correo                             | `''`              |
+| `NOTIFY_MULTI_TO`    | Permite varios destinatarios separados por coma | `false`           |
+| `SMTP_HOST`          | Servidor SMTP                                   | `''`              |
+| `SMTP_PORT`          | Puerto SMTP                                     | `587`             |
+| `SMTP_SECURE`        | Usar TLS                                        | `false`           |
+| `SMTP_USER`          | Usuario SMTP                                    | `''`              |
+| `SMTP_PASS`          | Contraseña SMTP                                 | `''`              |
+| `TELEGRAM_BOT_TOKEN` | Token del bot de Telegram                       | `''`              |
+| `TELEGRAM_CHAT_ID`   | ID del chat de Telegram                         | `''`              |
 
 ### Motor de contenedores
 
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `PODMAN_SOCKET` | Ruta al socket de Podman | `''` |
-| `CONTAINERS_SOCKET` | Ruta genérica al socket del motor | `''` |
-| `DOCKER_HOST` | URL de conexión (unix:// o tcp://) | `''` |
+| Variable            | Descripción                        | Valor por defecto |
+| ------------------- | ---------------------------------- | ----------------- |
+| `PODMAN_SOCKET`     | Ruta al socket de Podman           | `''`              |
+| `CONTAINERS_SOCKET` | Ruta genérica al socket del motor  | `''`              |
+| `DOCKER_HOST`       | URL de conexión (unix:// o tcp://) | `''`              |
 
 ### Preview
 
-| Variable | Descripción | Valor por defecto |
-|---|---|---|
-| `PREVIEW_ALLOWED_HOSTS` | Hosts permitidos en preview (separados por coma) | `''` |
+| Variable                | Descripción                                      | Valor por defecto |
+| ----------------------- | ------------------------------------------------ | ----------------- |
+| `PREVIEW_ALLOWED_HOSTS` | Hosts permitidos en preview (separados por coma) | `''`              |
 
 ## Estado persistente
 
@@ -169,7 +184,7 @@ journalctl --user -u cv-dev -f         # logs
 Notas:
 
 - Es un **servicio de usuario**: no requiere `sudo` y vive en tu sesión. Para que
-  siga corriendo sin sesión gráfica abierta, habilita el *lingering*:
+  siga corriendo sin sesión gráfica abierta, habilita el _lingering_:
   `loginctl enable-linger <usuario>`.
 - Para producción real, cambia en el envoltorio `pnpm dev` por `pnpm preview`
   (o usa un adaptador como `@sveltejs/adapter-node`).
@@ -181,4 +196,5 @@ pnpm check      # typecheck + svelte-check
 pnpm lint       # prettier + eslint
 pnpm test       # vitest (servidor y componentes)
 ```
+
 # containers-view

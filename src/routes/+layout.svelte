@@ -3,8 +3,14 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Toasts from '$lib/components/Toasts.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import { theme } from '$lib/theme.svelte';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
+
+	onMount(() => {
+		theme.apply();
+	});
 </script>
 
 <svelte:head>

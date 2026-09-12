@@ -157,22 +157,34 @@
 		grid-template-columns: 32px 1fr auto auto;
 		align-items: center;
 		gap: 14px;
-		padding: 12px 14px;
+		padding: 12px 16px;
 		background: var(--bg-elevated);
 		border: 1px solid var(--border);
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-md);
+		box-shadow: var(--card-shadow);
 		transition:
 			border-color 0.15s ease,
+			box-shadow 0.15s ease,
 			background 0.15s ease;
 	}
 	.row:hover {
 		border-color: var(--border-strong);
+		box-shadow: var(--card-shadow-hover);
 	}
 	.row.highlighted {
-		border-color: rgba(251, 191, 36, 0.5);
+		border-color: rgba(0, 112, 243, 0.35);
 		background:
-			linear-gradient(180deg, rgba(251, 191, 36, 0.07), rgba(251, 191, 36, 0.03) 40%),
+			linear-gradient(180deg, rgba(0, 112, 243, 0.08), rgba(0, 112, 243, 0.02) 40%),
 			var(--bg-elevated);
+		box-shadow:
+			0 0 0 1px rgba(0, 112, 243, 0.2),
+			var(--card-shadow);
+	}
+	.row.highlighted:hover {
+		border-color: rgba(0, 112, 243, 0.5);
+		box-shadow:
+			0 0 0 1px rgba(0, 112, 243, 0.35),
+			var(--card-shadow-hover);
 	}
 
 	.star {
@@ -182,15 +194,22 @@
 		height: 28px;
 		border: none;
 		background: transparent;
-		border-radius: 6px;
+		border-radius: var(--radius-pill);
 		color: var(--text-faint);
+		transition:
+			color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
 	}
 	.star:hover {
-		color: var(--warning);
-		background: var(--warning-bg);
+		color: var(--accent);
+		background: var(--info-bg);
+	}
+	.star:active {
+		transform: scale(0.92);
 	}
 	.star.active {
-		color: var(--warning);
+		color: var(--accent);
 	}
 
 	.info {
@@ -227,7 +246,7 @@
 		font-size: 12px;
 		font-weight: 600;
 		padding: 3px 10px;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		text-transform: capitalize;
 		white-space: nowrap;
 	}
@@ -242,20 +261,23 @@
 		background: var(--success-bg);
 	}
 	.status.created {
-		color: var(--info);
+		color: var(--accent);
 		background: var(--info-bg);
 	}
 	.status.exited,
 	.status.dead,
-	.status.removing,
 	.status.unknown {
-		color: var(--text-muted);
-		background: rgba(148, 163, 184, 0.12);
+		color: var(--status-offline);
+		background: var(--status-offline-bg);
+	}
+	.status.removing {
+		color: var(--danger);
+		background: var(--danger-bg);
 	}
 	.status.paused,
 	.status.restarting {
-		color: var(--warning);
-		background: var(--warning-bg);
+		color: var(--status-paused);
+		background: var(--status-paused-bg);
 	}
 
 	.actions {
@@ -265,20 +287,29 @@
 	.action {
 		display: grid;
 		place-items: center;
-		width: 30px;
-		height: 30px;
-		border-radius: 7px;
+		width: 32px;
+		height: 32px;
+		border-radius: var(--radius-pill);
 		border: 1px solid var(--border);
 		background: var(--bg-raised);
 		color: var(--text-muted);
+		box-shadow: var(--card-shadow);
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease,
+			background-color 0.15s ease,
+			transform 0.15s ease;
 	}
 	.action:hover:not(:disabled) {
 		color: var(--text);
 		border-color: var(--border-strong);
 	}
+	.action:active:not(:disabled) {
+		transform: scale(0.94);
+	}
 	.action.danger:hover:not(:disabled) {
 		color: var(--danger);
-		border-color: rgba(251, 113, 133, 0.4);
+		border-color: rgba(255, 91, 79, 0.4);
 		background: var(--danger-bg);
 	}
 	.action:disabled {

@@ -42,19 +42,19 @@
 		z-index: 50;
 		display: grid;
 		place-items: center;
-		background: rgba(2, 6, 12, 0.7);
-		backdrop-filter: blur(2px);
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
 		padding: 16px;
 	}
 
 	.dialog {
 		width: 100%;
 		max-width: 420px;
-		background: var(--bg-elevated);
-		border: 1px solid var(--border-strong);
-		border-radius: var(--radius);
-		padding: 20px;
-		box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+		background: var(--bg-surface);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-lg);
+		padding: 24px;
+		box-shadow: var(--modal-shadow);
 		animation: dialog-in 0.16s ease-out;
 	}
 
@@ -82,8 +82,9 @@
 
 	.message {
 		color: var(--text-muted);
-		margin: 10px 0 18px;
+		margin: 10px 0 20px;
 		white-space: pre-line;
+		line-height: 1.5;
 	}
 
 	.actions {
@@ -93,30 +94,58 @@
 	}
 
 	button {
-		border-radius: var(--radius-sm);
-		padding: 8px 14px;
+		border-radius: var(--radius-pill);
+		padding: 8px 16px;
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
 		border: 1px solid var(--border);
 		background: var(--bg-raised);
 		color: var(--text);
+		box-shadow: var(--card-shadow);
+		transition:
+			transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+			background-color 0.15s ease,
+			border-color 0.15s ease,
+			color 0.15s ease;
 	}
 	button:hover {
 		border-color: var(--border-strong);
+		color: var(--text);
+	}
+	button:active {
+		transform: scale(0.97);
 	}
 
 	.ghost {
 		background: transparent;
+		box-shadow: none;
+	}
+	.ghost:hover {
+		background: var(--bg-raised);
 	}
 
 	.confirm {
-		background: var(--accent);
-		border-color: var(--accent);
-		color: #062031;
+		background: #0070f3;
+		border-color: #0070f3;
+		color: #ffffff;
+		box-shadow:
+			0 0 0 1px rgba(0, 0, 0, 0.08),
+			0 2px 4px rgba(0, 0, 0, 0.08);
+	}
+	.confirm:hover {
+		background: #0060df;
+		border-color: #0060df;
+		color: #ffffff;
 	}
 	.confirm.danger {
-		background: var(--danger);
-		border-color: var(--danger);
-		color: #2c0710;
+		background: var(--danger-bg);
+		border-color: rgba(255, 91, 79, 0.3);
+		color: var(--danger);
+		box-shadow: none;
+	}
+	.confirm.danger:hover {
+		background: rgba(255, 91, 79, 0.2);
+		border-color: rgba(255, 91, 79, 0.5);
+		color: var(--danger);
 	}
 </style>

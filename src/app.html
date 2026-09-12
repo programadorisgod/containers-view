@@ -13,7 +13,9 @@
 		<script>
 			(function () {
 				try {
-					var stored = localStorage.getItem('containers-view-theme');
+					var url = new URL(window.location.href);
+					var queryTheme = url.searchParams.get('theme');
+					var stored = queryTheme || localStorage.getItem('containers-view-theme');
 					var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 					var theme =
 						stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'dark';

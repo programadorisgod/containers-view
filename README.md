@@ -10,7 +10,13 @@ Construido con SvelteKit y diseñado con la estética **Vercel Design System** y
 - **Acciones y Micro-interacciones**: Botones píldora sólidos y retroalimentación activa al presionar (`active:scale`).
 - **Destacados con Acento Azul**: Visualización limpia y distintiva para contenedores vigilados.
 
-![Containers View Dashboard](snapshots/dark.png)
+### Modo Oscuro
+
+![Containers View — Dark Mode](snapshots/dark.png)
+
+### Modo Claro
+
+![Containers View — Light Mode](snapshots/light.png)
 
 ## Desarrollo
 

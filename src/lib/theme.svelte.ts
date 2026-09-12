@@ -4,6 +4,9 @@ const THEME_KEY = 'containers-view-theme';
 
 function getInitialTheme(): 'dark' | 'light' {
 	if (!browser) return 'dark';
+	const url = new URL(window.location.href);
+	const queryTheme = url.searchParams.get('theme');
+	if (queryTheme === 'light' || queryTheme === 'dark') return queryTheme;
 	const stored = localStorage.getItem(THEME_KEY);
 	if (stored === 'light' || stored === 'dark') return stored;
 	return 'dark';
